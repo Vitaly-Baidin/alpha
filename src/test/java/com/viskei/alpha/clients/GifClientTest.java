@@ -1,17 +1,14 @@
 package com.viskei.alpha.clients;
 
-import com.viskei.alpha.model.Exchange;
 import com.viskei.alpha.model.Gif;
 import com.viskei.alpha.services.URIService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+@SpringBootTest
 class GifClientTest {
     @Value("${gif.server}")
     private String server;
