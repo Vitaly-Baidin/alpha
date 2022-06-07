@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -35,6 +34,10 @@ public class ExchangeController {
     private String gifServer;
     @Value("${gif.app_id}")
     private String gifAppId;
+    @Value("${gif.more}")
+    private String more;
+    @Value("${gif.less}")
+    private String less;
 
 
     @Autowired
@@ -47,17 +50,19 @@ public class ExchangeController {
 
     @GetMapping("/")
     public Gif getDefault() {
-        return getGif(exchangeCurrency);
+        return getGifJSON(exchangeCurrency);
     }
 
     @GetMapping("/{currency}")
-    public Gif getGif(@PathVariable String currency) {
+    public Gif getGifJSON(@PathVariable String currency) {
 
-        Exchange exchangeNow = exchangeClient.getExchange(uriService.getExchangeURI(exchangeServer, exchangeAppId, currency.toUpperCase(), LocalDateTime.now()));
-        Exchange exchangeYesterday = exchangeClient.getExchange(uriService.getExchangeURI(exchangeServer, exchangeAppId, currency.toUpperCase(), LocalDateTime.now().minusDays(1)));
+        Exchange exchangeNow = exchangeClient.getExchange(uriService.getExchangeURI(exchangeServer, exchangeAppId, currency, LocalDateTime.now()));
+        Exchange exchangeYesterday = exchangeClient.getExchange(uriService.getExchangeURI(exchangeServer, exchangeAppId, currency, LocalDateTime.now().minusDays(1)));
 
-        String tag = exchangeService.compareExchanges(exchangeNow, exchangeYesterday, currency);
+        String tag = exchangeService.compareExchanges(exchangeNow, exchangeYesterday, exchangeCurrency) ? more : less;
 
-        return gifClient.getGif(uriService.getGifURI(gifServer, gifAppId, tag));
+        Gif gif = gifClient.getGif(uriService.getGifURI(gifServer, gifAppId, tag));
+
+        return gif;
     }
 }
